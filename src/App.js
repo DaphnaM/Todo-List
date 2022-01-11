@@ -24,6 +24,11 @@ function App() {
     })
     setTasks(newTasks)
   }
+
+  function deleteItem(itemId) {
+    const newTasks = tasks.filter(task => task.id !== itemId)
+    setTasks(newTasks)
+  }
   function handleInputChange(e) {
     setTaskInput(e.target.value)
   }
@@ -40,36 +45,38 @@ function App() {
     <div className="App">
       <input type="text" placeholder="enter task..." value={taskInput} onChange={handleInputChange} />
       <button onClick={addTask} className="button-style add-button">Add Tasks</button>
-      <ToDoList items={notCompleted} title="Tasks" onClick={toggleItem} />
-      <ToDoList items={completedTasks} title="Done" onClick={toggleItem} />
+      <ToDoList items={notCompleted} title="Tasks" onCheckboxClick={toggleItem} onDelete={deleteItem} />
+      <ToDoList items={completedTasks} title="Done" onCheckboxClick={toggleItem} onDelete={deleteItem} />
 
     </div>
   );
 }
 
-function ToDoList({ title, items, onClick }) { //IS it supposed to be the same order as line 43? meaning items, title and then onClick? 
+function ToDoList({ title, items, onCheckboxClick, onDelete }) { //IS it supposed to be the same order as line 43? meaning items, title and then onClick? 
 
   return (<>
     <h1> {title}</h1>
     <ul>
-      {items.map(item => <ListItem {...item} onClick={onClick} />)}
+      {items.map(item => <ListItem {...item} onCheckboxClick={onCheckboxClick} onDelete={onDelete} />)}
 
     </ul>
   </>
   )
 }
-function MarkCrossed() {
-  //if checked, add to classedlist chcked 
-}
 
-function ListItem({ checked, text, id, onClick }) {
-  function handleClick(e) {
-    onClick(id)
+
+function ListItem({ checked, text, id, onCheckboxClick, onDelete }) {
+  function handleCheckboxClick(e) {
+    onCheckboxClick(id)
+  }
+  function handleXButton() {
+    onDelete(id)
+
   }
   return <li className="list-item">
-    <input type="checkbox" checked={checked} onClick={handleClick} />
+    <input type="checkbox" checked={checked} onClick={handleCheckboxClick} />
     <span className={checked ? "done" : ""}>
-      {text}</span> <button className='button-style' >X</button>
+      {text}</span> <button className='button-style' onClick={handleXButton}>X</button>
   </li>
 }
 
